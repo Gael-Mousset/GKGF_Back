@@ -5,11 +5,108 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["typedSql"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+enum Maker {
+  Nintendo
+  Sega
+  Sony
+  Microsoft
+}
+
+enum Type {
+  Console
+  Game
+  Accessories
+}
+
+enum Edition {
+  Black_Label
+  Platinum
+  Collector
+  Limited
+  Game_of_the_Year
+  Special_Edition
+  Nintendo_Select
+}
+
+enum Region {
+  PAL
+  NTSC
+  NTSC_Japan
+}
+
+enum Etat {
+  New
+  Like_New
+  Very_Good
+  Good
+  Acceptable
+  Poor
+  For_Part
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Article   Article[]
+}
+
+model Plateform {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  maker    Maker
+  articles Article[]
+
+  resources Resource?
+
+  idResource  Int?
+  urlResource String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Resource {
+  id             Int      @id @default(autoincrement())
+  name           String
+  url            String
+  PlateformeName String?  @unique
+  articleId      Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  Article   Article?   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  Plateform Plateform? @relation(fields: [PlateformeName], references: [name], onDelete: Cascade)
+}
+
+model Article {
+  id             Int        @id @default(autoincrement())
+  title          String
+  type           Type
+  PlateformeName String
+  edition        Edition
+  region         Region
+  inBox          Boolean
+  manual         Boolean
+  etat           Etat
+  isComplete     Boolean
+  price          Int
+  description    String
+  userId         Int
+  resource       Resource[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  user           User       @relation(fields: [userId], references: [id])
+  plateform      Plateform  @relation(fields: [PlateformeName], references: [name])
 }
