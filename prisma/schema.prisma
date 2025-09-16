@@ -21,13 +21,15 @@ enum Maker {
   Microsoft
 }
 
-enum Type {
-  Console
-  Game
-  Accessories
+enum Pegi {
+  Pegi_3
+  Pegi_7
+  Pegi_12
+  Pegi_16
+  Pegi_18
 }
 
-enum Edition {
+enum Edition_Game {
   Black_Label
   Platinum
   Collector
@@ -38,9 +40,35 @@ enum Edition {
 }
 
 enum Region {
+  EUR
   PAL
   NTSC
   NTSC_Japan
+}
+
+enum All_Support {
+  All_Support
+  Partial_Support
+  No_Support
+}
+
+enum Language {
+  English
+  French
+  German
+  Italian
+  Spanish
+  Japanese
+  Chinese
+  Korean
+}
+
+enum Type_Accessoire {
+  Controller
+  PowerSupply
+  Memory
+  VideoOutput
+  Other
 }
 
 enum Etat {
@@ -54,59 +82,131 @@ enum Etat {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Article   Article[]
+  id         Int          @id @default(autoincrement())
+  name       String
+  email      String       @unique
+  password   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  game       Game[]
+  console    Console[]
+  accessoire Accessoire[]
 }
 
 model Plateform {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  maker    Maker
-  articles Article[]
-
-  resources Resource?
-
-  idResource  Int?
-  urlResource String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  name       String       @id
+  maker      Maker
+  resources  Resource?
+  idResource Int?         @unique
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  game       Game[]
+  console    Console[]
+  accessoire Accessoire[]
 }
 
 model Resource {
   id             Int      @id @default(autoincrement())
-  name           String
-  url            String
+  url            String   @unique @db.VarChar(255)
+  mimetype       String   @db.VarChar(20)
   PlateformeName String?  @unique
-  articleId      Int?
+  gameId         Int?
+  consoleId      Int?
+  accessoireId   Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  Article   Article?   @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  Plateform Plateform? @relation(fields: [PlateformeName], references: [name], onDelete: Cascade)
+  game       Game?       @relation(fields: [gameId], references: [id])
+  console    Console?    @relation(fields: [consoleId], references: [id])
+  plateform  Plateform?  @relation(fields: [PlateformeName], references: [name], onDelete: Cascade)
+  accessoire Accessoire? @relation(fields: [accessoireId], references: [id], onDelete: Cascade)
 }
 
-model Article {
-  id             Int        @id @default(autoincrement())
-  title          String
-  type           Type
+model Game {
+  id             Int          @id @default(autoincrement())
+  title          String       @db.VarChar(255)
   PlateformeName String
-  edition        Edition
-  region         Region
-  inBox          Boolean
-  manual         Boolean
-  etat           Etat
-  isComplete     Boolean
-  price          Int
+  serial_number  String       @db.VarChar(20)
+  excusivity     Boolean      @default(false)
+  Pegi           Pegi
+  edition        Edition_Game @default(Black_Label)
+  region         Region       @default(PAL)
+  language       Language     @default(French)
+  inBox          Boolean      @default(false)
+  manual         Boolean      @default(false)
+  All_Support    All_Support  @default(All_Support)
+  etat           Etat         @default(New)
+  collection     Boolean      @default(false)
+  throws         Boolean      @default(false)
+  resources      Resource[]
   description    String
+  UserId         Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  plateformeName Plateform @relation(fields: [PlateformeName], references: [name])
+  user           User      @relation(fields: [UserId], references: [id])
+}
+
+model Console {
+  id             Int        @id @default(autoincrement())
+  title          String     @db.VarChar(255)
+  plateformeName String
+  edition        String
+  serial_number  String     @db.VarChar(50)
+  region         Region     @default(PAL)
+  manual         Boolean    @default(false)
+  inBox          Boolean    @default(false)
+  allItems       Boolean    @default(false)
+  etat           Etat       @default(New)
+  throw          Boolean    @default(false)
+  collection     Boolean    @default(false)
+  resources      Resource[]
+  description    String     @db.VarChar(255)
   userId         Int
-  resource       Resource[]
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
-  user           User       @relation(fields: [userId], references: [id])
-  plateform      Plateform  @relation(fields: [PlateformeName], references: [name])
+
+  plateforme Plateform @relation(fields: [plateformeName], references: [name])
+  user       User      @relation(fields: [userId], references: [id])
 }
+
+model Accessoire {
+  id             Int             @id @default(autoincrement())
+  nom            String          @db.VarChar(255)
+  plateformeName String
+  type           Type_Accessoire @default(Controller)
+  modele         String          @db.VarChar(255)
+  etat           Etat            @default(New)
+  operates       Boolean         @default(false)
+  collection     Boolean         @default(false)
+  resources      Resource[]
+  description    String          @db.VarChar(255)
+  userId         Int
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  plateforme Plateform @relation(fields: [plateformeName], references: [name])
+  user       User      @relation(fields: [userId], references: [id])
+}
+
+// model Article {
+//   id             Int        @id @default(autoincrement())
+//   title          String
+//   type           Type
+//   PlateformeName String
+//   edition        Edition
+//   region         Region
+//   inBox          Boolean
+//   manual         Boolean
+//   etat           Etat
+//   isComplete     Boolean
+//   price          Int
+//   description    String
+//   userId         Int
+//   resource       Resource[]
+//   createdAt      DateTime   @default(now())
+//   updatedAt      DateTime   @updatedAt
+//   user           User       @relation(fields: [userId], references: [id])
+//   plateform      Plateform  @relation(fields: [PlateformeName], references: [name])
+// }
