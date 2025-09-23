@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { PrismaService } from 'prisma/services/prisma.service';
+import { pl } from '@faker-js/faker/.';
+import { Edition } from 'src/edition/entities/edition.entity';
 
 @Injectable()
 export class GameService {
@@ -10,31 +12,103 @@ export class GameService {
     return this.prisma.game.create({
       data: {
         title: createGameDto.title,
-        plateformeName: createGameDto.plateformeName,
+        series: { connect: { id: createGameDto.idSeries } },
+        sortTitle: createGameDto.sortTitle,
+        plateforme: { connect: { id: createGameDto.plateformeId } },
         serial_number: createGameDto.serial_number,
-        excusivity: createGameDto.excusivity,
-        pegi: createGameDto.pegi,
-        edition: createGameDto.edition,
+        barcode: createGameDto.barcode,
+        format: createGameDto.format,
+        editions: { connect: { id: createGameDto.idEdition } },
         region: createGameDto.region,
+        audience: createGameDto.audience,
         language: createGameDto.language,
-        inBox: createGameDto.inBox,
-        manual: createGameDto.manual,
-        all_support: createGameDto.all_support,
-        etat: createGameDto.etat,
-        collection: createGameDto.collection,
-        throws: createGameDto.throws,
+        excusivity: createGameDto.excusivity,
+        jeux: createGameDto.jeux,
+        boite: createGameDto.boite,
+        manuel: createGameDto.manuel,
+        etatJeu: createGameDto.etatJeu,
+        launch: createGameDto.launch,
+        etatbox: createGameDto.etatbox,
+        etatManuel: createGameDto.etatManuel,
+        objectif: createGameDto.objectif,
+        location: { connect: { id: createGameDto.idLocation } },
         description: createGameDto.description,
-        userId: createGameDto.userId,
+        user: { connect: { id: createGameDto.userId } },
       },
     });
   }
 
   findAll() {
-    return `This action returns all game`;
+    return this.prisma.game.findMany({
+      select: {
+        id: true,
+        title: true,
+        sortTitle: true,
+        series: { select: { id: true, name: true } },
+
+        plateforme: { select: { id: true, name: true } },
+        serial_number: true,
+        barcode: true,
+        format: true,
+
+        editions: { select: { id: true, name: true } },
+        region: true,
+        audience: true,
+        language: true,
+        excusivity: true,
+
+        jeux: true,
+        boite: true,
+        manuel: true,
+        etatJeu: true,
+        launch: true,
+        etatbox: true,
+        etatManuel: true,
+
+        objectif: true,
+        location: { select: { id: true, name: true } },
+
+        description: true,
+        user: { select: { id: true, name: true } },
+      },
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} game`;
+    return this.prisma.game.findFirst({
+      where: { id: id },
+      select: {
+        id: true,
+        title: true,
+        sortTitle: true,
+        series: { select: { id: true, name: true } },
+
+        plateforme: { select: { id: true, name: true } },
+        serial_number: true,
+        barcode: true,
+        format: true,
+
+        editions: { select: { id: true, name: true } },
+        region: true,
+        audience: true,
+        language: true,
+        excusivity: true,
+
+        jeux: true,
+        boite: true,
+        manuel: true,
+        etatJeu: true,
+        launch: true,
+        etatbox: true,
+        etatManuel: true,
+
+        objectif: true,
+        location: { select: { id: true, name: true } },
+
+        description: true,
+        user: { select: { id: true, name: true } },
+      },
+    });
   }
 
   update(id: number, updateGameDto: UpdateGameDto) {

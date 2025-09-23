@@ -1,55 +1,53 @@
 import {
   Game,
-  Pegi,
-  Edition_Game,
   Region,
   Language,
-  All_Support,
   Etat,
-  User,
-  Plateform,
+  Format,
+  Signal,
+  Audience_Rating,
+  launch_status,
+  Objectif,
 } from '@prisma/client';
 import { generateSerialPS2, prisma } from './utiles';
 import { fakerFR as faker } from '@faker-js/faker';
-import {
-  getRandomNumber,
-  getRandomBoolean,
-  getRendomEnumValue,
-  generateSerialSwitch,
-} from './utiles';
+import { getRandomBoolean, getRendomEnumValue } from './utiles';
+import { platform } from 'os';
 
 export const createGames = async (number: number): Promise<Game[]> => {
   const games: Game[] = [];
   const user = await prisma.user.findUnique({
     where: { email: 'user@gmail.com' },
   });
+
+  const plateforme = await prisma.plateform.findFirst({
+    where: { name: 'PS2' },
+  });
+
+  const series = await prisma.series.findFirst({
+    where: { name: 'Grand Theft Auto' },
+  });
+  const edition = await prisma.editions.findFirst({
+    where: { name: 'Black Label' },
+  });
+  const location = await prisma.location.findFirst({
+    where: { name: 'Chambre' },
+  });
+
   if (!user) {
     throw new Error('User not found');
   }
-
-  for (let i = 0; i < number; i++) {
-    games.push(
-      await prisma.game.create({
-        data: {
-          title: faker.commerce.productName(),
-          plateforme: { connect: { name: 'Nintendo Switch' } },
-          serial_number: generateSerialSwitch(),
-          excusivity: getRandomBoolean(),
-          pegi: 'Pegi3' as Pegi,
-          edition: getRendomEnumValue(Edition_Game),
-          region: getRendomEnumValue(Region),
-          language: getRendomEnumValue(Language),
-          inBox: getRandomBoolean(),
-          manual: getRandomBoolean(),
-          all_support: getRendomEnumValue(All_Support),
-          etat: getRendomEnumValue(Etat),
-          collection: getRandomBoolean(),
-          throws: getRandomBoolean(),
-          description: faker.lorem.sentence(),
-          user: { connect: { id: user.id } },
-        },
-      }),
-    );
+  if (!plateforme) {
+    throw new Error('Plateforme not found');
+  }
+  if (!series) {
+    throw new Error('Series not found');
+  }
+  if (!edition) {
+    throw new Error('Edition not found');
+  }
+  if (!location) {
+    throw new Error('Location not found');
   }
 
   for (let i = 0; i < number; i++) {
@@ -57,20 +55,34 @@ export const createGames = async (number: number): Promise<Game[]> => {
       await prisma.game.create({
         data: {
           title: faker.commerce.productName(),
-          plateforme: { connect: { name: 'PS2' } },
+          series: { connect: { id: 1 } },
+          sortTitle: faker.commerce.productName(),
+
+          plateforme: { connect: { id: plateforme.id } },
           serial_number: generateSerialPS2(),
-          excusivity: getRandomBoolean(),
-          pegi: 'Pegi3' as Pegi,
-          edition: getRendomEnumValue(Edition_Game),
+          barcode: generateSerialPS2(),
+          format: getRendomEnumValue(Format),
+
+          editions: { connect: { id: series.id } },
           region: getRendomEnumValue(Region),
+          signal: getRendomEnumValue(Signal),
+          audience: getRendomEnumValue(Audience_Rating),
           language: getRendomEnumValue(Language),
-          inBox: getRandomBoolean(),
-          manual: getRandomBoolean(),
-          all_support: getRendomEnumValue(All_Support),
-          etat: getRendomEnumValue(Etat),
-          collection: getRandomBoolean(),
-          throws: getRandomBoolean(),
-          description: faker.lorem.sentence(),
+          excusivity: getRandomBoolean(),
+
+          jeux: getRandomBoolean(),
+          boite: getRandomBoolean(),
+          manuel: getRandomBoolean(),
+          etatJeu: getRendomEnumValue(Etat),
+          launch: getRendomEnumValue(launch_status),
+          etatbox: getRendomEnumValue(Etat),
+          etatManuel: getRendomEnumValue(Etat),
+
+          objectif: getRendomEnumValue(Objectif),
+          location: { connect: { id: location.id } },
+
+          description: faker.lorem.paragraph(),
+
           user: { connect: { id: user.id } },
         },
       }),

@@ -21,7 +21,8 @@ enum Maker {
   Microsoft
 }
 
-enum Pegi {
+enum Audience_Rating {
+  All
   Pegi_3
   Pegi_7
   Pegi_12
@@ -39,11 +40,17 @@ enum Edition_Game {
   Nintendo_Select
 }
 
-enum Region {
-  EUR
+enum Signal {
   PAL
   NTSC
   NTSC_Japan
+}
+
+enum Region {
+  EUR
+  US
+  JAP
+  Multiple
 }
 
 enum All_Support {
@@ -71,20 +78,58 @@ enum Type_Accessoire {
   Other
 }
 
-enum Etat {
-  New
-  Like_New
-  Very_Good
-  Good
-  Acceptable
-  Poor
-  For_Part
-}
-
 enum Status {
   in_progress
   in_ligne
   done
+}
+
+enum Format {
+  Cartouche
+  Cassette
+  Disquette
+  CD
+  DVD
+  BluRay
+}
+
+enum Etat {
+  non_defini
+  neuf
+  tres_bon
+  bon
+  moyen
+  mauvais
+  tres_mauvais
+  hors_serie
+}
+
+enum Contenu {
+  non_defini
+  sous_blister
+  complet
+  jeux_seule
+  boite_seule
+  manuel_seule
+  boite_manuel_seule
+  jaquette_manquante
+  jeux_boite
+  jeux_manuel
+}
+
+enum Objectif {
+  non_defini
+  vendre
+  garder
+  completer
+  remplacer
+  reparer
+}
+
+enum launch_status {
+  WORKING
+  PARTIAL
+  NOT_WORKING
 }
 
 model User {
@@ -102,16 +147,37 @@ model User {
 }
 
 model Plateform {
-  id         Int          @id @default(autoincrement())
-  name       String
-  maker      Maker
-  resources  Resource?
-  idResource Int?         @unique
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  id Int @id @default(autoincrement())
+
+  name  String
+  maker Maker
+
+  resources Resource?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   game       Game[]
   console    Console[]
   accessoire Accessoire[]
+}
+
+model Series {
+  id   Int    @id @default(autoincrement())
+  name String
+  game Game[]
+}
+
+model Editions {
+  id   Int    @id @default(autoincrement())
+  name String
+  game Game[]
+}
+
+model Location {
+  id   Int    @id @default(autoincrement())
+  name String
+  game Game[]
 }
 
 model Resource {
@@ -132,31 +198,59 @@ model Resource {
 }
 
 model Game {
-  id            Int          @id @default(autoincrement())
-  title         String       @db.VarChar(255)
+  id        Int    @id @default(autoincrement())
+  //Infos 
+  title     String @db.VarChar(255)
+  idSeries  Int
+  sortTitle String @db.VarChar(255)
+
+  //info boite
   plateformeId  Int
-  serial_number String       @db.VarChar(20)
-  excusivity    Boolean      @default(false)
-  pegi          Pegi
-  edition       Edition_Game @default(Black_Label)
-  region        Region       @default(PAL)
-  language      Language     @default(French)
-  inBox         Boolean      @default(false)
-  manual        Boolean      @default(false)
-  all_support   All_Support  @default(All_Support)
-  etat          Etat         @default(New)
-  collection    Boolean      @default(false)
-  throws        Boolean      @default(false)
-  resources     Resource[]
-  description   String
-  userId        Int
-  annonceId     Int?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  serial_number String @db.VarChar(20)
+  barcode       String @db.VarChar(20)
+  format        Format @default(DVD)
+
+  // info version
+  idEdition  Int
+  region     Region          @default(EUR)
+  signal     Signal          @default(PAL)
+  audience   Audience_Rating @default(All)
+  language   Language        @default(French)
+  excusivity Boolean         @default(false)
+
+  // info contenu
+  jeux       Boolean       @default(false)
+  boite      Boolean       @default(false)
+  manuel     Boolean       @default(false)
+  etatJeu    Etat          @default(non_defini)
+  launch     launch_status @default(WORKING)
+  etatbox    Etat          @default(non_defini)
+  etatManuel Etat          @default(non_defini)
+
+  // objectif de la version 
+  objectif   Objectif @default(non_defini)
+  idLocation Int
+
+  // images
+  resources Resource[]
+
+  //description
+  description String @db.Text
+
+  // links externes
+  userId    Int
+  annonceId Int?
+
+  // infos creation
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   vente Vente?
 
+  series     Series    @relation(fields: [idSeries], references: [id])
   plateforme Plateform @relation(fields: [plateformeId], references: [id])
+  editions   Editions  @relation(fields: [idEdition], references: [id])
+  location   Location  @relation(fields: [idLocation], references: [id])
   user       User      @relation(fields: [userId], references: [id])
   annonce    Annonce?  @relation(fields: [annonceId], references: [id])
 }
@@ -167,11 +261,11 @@ model Console {
   plateformeId  Int
   edition       String
   serial_number String     @db.VarChar(50)
-  region        Region     @default(PAL)
+  region        Region     @default(EUR)
   manual        Boolean    @default(false)
   inBox         Boolean    @default(false)
   allItems      Boolean    @default(false)
-  etat          Etat       @default(New)
+  etat          Etat       @default(non_defini)
   throw         Boolean    @default(false)
   collection    Boolean    @default(false)
   resources     Resource[]
@@ -194,7 +288,7 @@ model Accessoire {
   plateformeId Int
   type         Type_Accessoire @default(Controller)
   modele       String          @db.VarChar(255)
-  etat         Etat            @default(New)
+  etat         Etat            @default(non_defini)
   operates     Boolean         @default(false)
   collection   Boolean         @default(false)
   resources    Resource[]

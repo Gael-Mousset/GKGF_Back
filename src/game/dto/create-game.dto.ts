@@ -1,59 +1,130 @@
+import { O } from '@faker-js/faker/dist/airline-CHFQMWko';
 import {
-  Pegi,
-  Edition_Game,
   Region,
   Language,
-  All_Support,
   Etat,
+  Format,
+  Audience_Rating,
+  launch_status,
+  Objectif,
 } from '@prisma/client';
-import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { CreateResourceDto } from 'src/resource/dto/create-resource.dto';
 
 export class CreateGameDto {
+  //Infos
+  @IsNotEmpty()
   @IsString()
   title: string;
 
-  @IsString()
-  plateformeName: string;
+  @IsNotEmpty()
+  idSeries: number;
 
+  @IsNotEmpty()
+  @IsString()
+  sortTitle: string;
+
+  //info boite
+  @IsNotEmpty()
+  plateformeId?: number;
+
+  @IsNotEmpty()
   @IsString()
   serial_number: string;
 
-  @IsBoolean()
-  excusivity: boolean;
+  @IsNotEmpty()
+  @IsString()
+  barcode: string;
 
-  @IsEnum(Pegi)
-  pegi: Pegi;
+  @IsNotEmpty()
+  @IsEnum(Format)
+  format: Format;
 
-  @IsEnum(Edition_Game)
-  edition: Edition_Game;
+  // info version
 
+  @IsNotEmpty()
+  idEdition: number;
+
+  @IsNotEmpty()
   @IsEnum(Region)
   region: Region;
 
+  @IsNotEmpty()
+  @IsEnum(Audience_Rating)
+  audience: Audience_Rating;
+
+  @IsNotEmpty()
   @IsEnum(Language)
   language: Language;
 
+  @IsNotEmpty()
   @IsBoolean()
-  inBox: boolean;
+  excusivity: boolean;
 
+  // info contenu
+  @IsNotEmpty()
   @IsBoolean()
-  manual: boolean;
+  jeux: boolean;
 
-  @IsEnum(All_Support)
-  all_support: All_Support;
+  @IsNotEmpty()
+  @IsBoolean()
+  boite: boolean;
 
+  @IsNotEmpty()
+  @IsBoolean()
+  manuel: boolean;
+
+  @IsNotEmpty()
   @IsEnum(Etat)
-  etat: Etat;
+  etatJeu: Etat;
 
-  @IsBoolean()
-  collection: boolean;
+  @IsNotEmpty()
+  @IsEnum(launch_status)
+  launch: launch_status;
 
-  @IsBoolean()
-  throws: boolean;
+  @IsNotEmpty()
+  @IsEnum(Etat)
+  etatbox: Etat;
 
+  @IsNotEmpty()
+  @IsEnum(Etat)
+  etatManuel: Etat;
+
+  // objectif de la version
+
+  @IsNotEmpty()
+  @IsEnum(Objectif)
+  objectif: Objectif;
+
+  @IsNotEmpty()
+  idLocation: number;
+
+  // images
+  @IsNotEmpty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateResourceDto)
+  resources?: CreateResourceDto[];
+
+  // description
+  @IsNotEmpty()
   @IsString()
   description: string;
 
-  @IsInt()
+  // links externes
+
+  @IsNotEmpty()
   userId: number;
+
+  @IsNotEmpty()
+  annonceId?: number;
 }
