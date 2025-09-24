@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { PrismaService } from 'prisma/services/prisma.service';
-import { pl } from '@faker-js/faker/.';
-import { Edition } from 'src/edition/entities/edition.entity';
 
 @Injectable()
 export class GameService {
@@ -34,6 +32,15 @@ export class GameService {
         location: { connect: { id: createGameDto.idLocation } },
         description: createGameDto.description,
         user: { connect: { id: createGameDto.userId } },
+        vente: createGameDto.vente
+          ? {
+              create: {
+                prix_achat: createGameDto.vente?.prix_achat,
+                date_achat: createGameDto.vente?.date_achat,
+                prix_estime: createGameDto.vente?.prix_estime,
+              },
+            }
+          : undefined,
       },
     });
   }

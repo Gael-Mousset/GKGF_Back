@@ -308,9 +308,9 @@ model Accessoire {
 
 model Vente {
   id          Int      @id @default(autoincrement())
-  prix_achat  Int
+  prix_achat  Float
   date_achat  DateTime
-  prix_estime Int
+  prix_estime Float
 
   gameId       Int? @unique
   consoleId    Int? @unique

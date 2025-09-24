@@ -1,4 +1,3 @@
-import { O } from '@faker-js/faker/dist/airline-CHFQMWko';
 import {
   Region,
   Language,
@@ -19,6 +18,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateResourceDto } from 'src/resource/dto/create-resource.dto';
+import { CreateVenteDto } from 'src/vente/dto/create-vente.dto';
 
 export class CreateGameDto {
   //Infos
@@ -127,4 +127,9 @@ export class CreateGameDto {
 
   @IsNotEmpty()
   annonceId?: number;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateVenteDto)
+  vente?: CreateVenteDto;
 }
