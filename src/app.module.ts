@@ -9,9 +9,20 @@ import { LocationModule } from './location/location.module';
 import { EditionModule } from './edition/edition.module';
 import { ResourceModule } from './resource/resource.module';
 import { VenteModule } from './vente/vente.module';
+import { FileModule } from './files/file.module';
 
 @Module({
-  imports: [GameModule, UserModule, PlateformModule, SeriesModule, LocationModule, EditionModule, ResourceModule, VenteModule],
+  imports: [
+    GameModule,
+    UserModule,
+    PlateformModule,
+    SeriesModule,
+    LocationModule,
+    EditionModule,
+    ResourceModule,
+    VenteModule,
+    FileModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
