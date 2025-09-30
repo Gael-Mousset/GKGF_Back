@@ -6,6 +6,7 @@ import {
   Audience_Rating,
   launch_status,
   Objectif,
+  Signal,
 } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
@@ -57,6 +58,10 @@ export class CreateGameDto {
   @IsNotEmpty()
   @IsEnum(Region)
   region: Region;
+
+  @IsNotEmpty()
+  @IsEnum(Signal)
+  signal: Signal;
 
   @IsNotEmpty()
   @IsEnum(Audience_Rating)

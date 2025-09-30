@@ -14,7 +14,7 @@ export class SeriesService {
   }
 
   findAll() {
-    return `This action returns all series`;
+    return prisma.series.findMany();
   }
 
   findOne(id: number) {

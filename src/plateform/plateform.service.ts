@@ -16,7 +16,7 @@ export class PlateformService {
   }
 
   findAll() {
-    return `This action returns all plateform`;
+    return this.prisma.plateform.findMany();
   }
 
   findOne(id: number) {

@@ -18,6 +18,7 @@ export class GameService {
         format: createGameDto.format,
         editions: { connect: { id: createGameDto.idEdition } },
         region: createGameDto.region,
+        signal: createGameDto.signal,
         audience: createGameDto.audience,
         language: createGameDto.language,
         excusivity: createGameDto.excusivity,
@@ -38,6 +39,8 @@ export class GameService {
                 prix_achat: createGameDto.vente?.prix_achat,
                 date_achat: createGameDto.vente?.date_achat,
                 prix_estime: createGameDto.vente?.prix_estime,
+                nameSalePlace: createGameDto.vente?.nameSalePlace,
+                salePlace: createGameDto.vente?.salePlace,
               },
             }
           : undefined,
@@ -60,6 +63,7 @@ export class GameService {
 
         editions: { select: { id: true, name: true } },
         region: true,
+        signal: true,
         audience: true,
         language: true,
         excusivity: true,
@@ -77,6 +81,7 @@ export class GameService {
 
         description: true,
         user: { select: { id: true, name: true } },
+        vente: true,
       },
     });
   }

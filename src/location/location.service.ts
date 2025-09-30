@@ -14,7 +14,7 @@ export class LocationService {
   }
 
   findAll() {
-    return `This action returns all location`;
+    return prisma.location.findMany();
   }
 
   findOne(id: number) {

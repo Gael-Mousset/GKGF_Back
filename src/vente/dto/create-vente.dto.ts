@@ -1,5 +1,6 @@
+import { salePlaces } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, Min } from 'class-validator';
+import { IsDate, IsEnum, IsNumber, IsString, Min } from 'class-validator';
 
 export class CreateVenteDto {
   @Type(() => Number)
@@ -15,4 +16,10 @@ export class CreateVenteDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   prix_estime: number;
+
+  @IsString()
+  nameSalePlace: string;
+
+  @IsEnum(salePlaces)
+  salePlace: salePlaces;
 }

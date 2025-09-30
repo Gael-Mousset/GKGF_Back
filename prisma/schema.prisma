@@ -53,12 +53,6 @@ enum Region {
   Multiple
 }
 
-enum All_Support {
-  All_Support
-  Partial_Support
-  No_Support
-}
-
 enum Language {
   English
   French
@@ -127,9 +121,19 @@ enum Objectif {
 }
 
 enum launch_status {
+  non_defini
   WORKING
   PARTIAL
   NOT_WORKING
+}
+
+enum salePlaces {
+  non_defini
+  Magasin
+  Vide_Greniers
+  Enchere
+  Don
+  Recyclerie
 }
 
 model User {
@@ -206,9 +210,9 @@ model Game {
 
   //info boite
   plateformeId  Int
-  serial_number String @db.VarChar(20)
-  barcode       String @db.VarChar(20)
-  format        Format @default(DVD)
+  serial_number String  @db.VarChar(20)
+  barcode       String? @db.VarChar(20)
+  format        Format  @default(DVD)
 
   // info version
   idEdition  Int
@@ -307,10 +311,13 @@ model Accessoire {
 }
 
 model Vente {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   prix_achat  Float
-  date_achat  DateTime
+  date_achat  DateTime?
   prix_estime Float
+
+  nameSalePlace String?
+  salePlace     salePlaces?
 
   gameId       Int? @unique
   consoleId    Int? @unique

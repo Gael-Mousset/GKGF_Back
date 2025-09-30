@@ -14,7 +14,7 @@ export class EditionService {
   }
 
   findAll() {
-    return `This action returns all edition`;
+    return prisma.editions.findMany();
   }
 
   findOne(id: number) {
