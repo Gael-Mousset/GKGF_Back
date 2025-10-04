@@ -119,6 +119,7 @@ export class GameService {
 
         description: true,
         user: { select: { id: true, name: true } },
+        vente: true,
       },
     });
   }
