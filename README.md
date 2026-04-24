@@ -1,98 +1,170 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🎮 GKGF — Game Keep, Game Flip · Back-end
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> API REST du projet GKGF — gère la persistance de ta collection de jeux vidéo en base de données.  
+> Expose les endpoints consommés par le [front-end React](https://github.com/Gael-Mousset/GKGF_Front).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📖 Présentation
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+**GKGF Back** est le serveur d'API de l'application Game Keep, Game Flip. Il est responsable de :
 
-## Project setup
+- La gestion CRUD de la collection de jeux vidéo
+- La persistance des données via une base de données relationnelle
+- L'upload et le stockage des images de jaquettes
+- L'exposition d'une API REST consommée par le front-end
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 🛠️ Stack technique
 
-```bash
-# development
-$ npm run start
+| Catégorie | Technologie |
+|---|---|
+| Framework | NestJS 11 |
+| Langage | TypeScript 5.7 |
+| ORM | Prisma 6 |
+| Validation | class-validator + class-transformer |
+| Upload fichiers | Multer 2 |
+| Tests | Jest 29 + Supertest |
+| Linting / Format | ESLint 9 + Prettier |
+| Déploiement | Docker |
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## 🚀 Démarrage rapide
 
-## Run tests
+### Prérequis
+
+- Node.js ≥ 20
+- npm ≥ 9
+- Une base de données compatible Prisma (PostgreSQL, MySQL, SQLite…)
+
+### Installation
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+git clone https://github.com/Gael-Mousset/GKGF_Back.git
+cd GKGF_Back
+npm install
 ```
 
-## Deployment
+### Variables d'environnement
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Crée un fichier `.env` à la racine :
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/gkgf"
+PORT=3000
+```
+
+> ⚠️ Ne commit jamais ton `.env` — il est dans le `.gitignore`.
+
+### Migration de la base de données
 
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Appliquer les migrations Prisma
+npx prisma migrate dev
+
+# (Optionnel) Seeder la base avec des données de test
+npm run seed
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Lancement en développement
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+L'API sera disponible sur [http://localhost:3000](http://localhost:3000).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 📦 Scripts disponibles
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+| Commande | Description |
+|---|---|
+| `npm run start` | Lance le serveur en mode normal |
+| `npm run start:dev` | Lance en mode watch (hot reload) |
+| `npm run start:prod` | Lance le build de production |
+| `npm run build` | Compile le projet |
+| `npm run seed` | Injecte des données de test via Faker |
+| `npm run test` | Lance les tests unitaires |
+| `npm run test:e2e` | Lance les tests end-to-end |
+| `npm run test:cov` | Lance les tests avec rapport de couverture |
+| `npm run lint` | Analyse et corrige le code avec ESLint |
+| `npm run format` | Formate le code avec Prettier |
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🗂️ Structure du projet
 
-## License
+```
+GKGF_Back/
+├── prisma/
+│   ├── schema.prisma      # Schéma de la base de données
+│   └── seed.ts            # Script de seed (Faker.js)
+├── src/
+│   ├── games/             # Module jeux (controller, service, dto)
+│   ├── uploads/           # Gestion des uploads d'images (Multer)
+│   └── main.ts            # Point d'entrée NestJS
+├── test/                  # Tests e2e
+├── uploads/               # Dossier local des fichiers uploadés
+├── dockerfile
+├── entrypoint.sh
+└── package.json
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## 🔌 Endpoints principaux
+
+> Base URL : `http://localhost:3000`
+
+| Méthode | Route | Description |
+|---|---|---|
+| `GET` | `/games` | Récupère toute la collection |
+| `GET` | `/games/:id` | Récupère un jeu par son ID |
+| `POST` | `/games` | Ajoute un jeu |
+| `PATCH` | `/games/:id` | Modifie un jeu |
+| `DELETE` | `/games/:id` | Supprime un jeu |
+| `POST` | `/games/:id/image` | Upload la jaquette d'un jeu |
+
+> ⚠️ Les routes exactes dépendent de l'implémentation dans `src/`. Ajuster si besoin.
+
+---
+
+## 🐳 Déploiement avec Docker
+
+```bash
+# Build de l'image
+docker build -t gkgf-back .
+
+# Lancer le conteneur
+docker run -p 3000:3000 --env-file .env gkgf-back
+```
+
+Le script `entrypoint.sh` s'occupe de lancer les migrations Prisma automatiquement au démarrage du conteneur.
+
+---
+
+## 🔗 Lien avec le front-end
+
+Ce back-end est conçu pour fonctionner avec le front-end GKGF :  
+👉 [github.com/Gael-Mousset/GKGF_Front](https://github.com/Gael-Mousset/GKGF_Front)
+
+---
+
+## 🗺️ Roadmap
+
+- [x] CRUD jeux vidéo
+- [x] Upload d'images (Multer)
+- [x] Seed de données de test (Faker.js)
+- [ ] Authentification utilisateur (JWT)
+- [ ] Système Keep / Flip par jeu
+- [ ] Pagination et filtres avancés
+- [ ] Documentation Swagger
+
+---
+
+## 👤 Auteur
+
+**Gaël Mousset** — [github.com/Gael-Mousset](https://github.com/Gael-Mousset)
